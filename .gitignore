@@ -57,6 +57,7 @@ ehthumbs.db
 
 # Ignore all files inside assets
 frontend/src/assets/*
+backend/upload/*
 
 # But keep specific images
 !frontend/src/assets/BannerImage.png
