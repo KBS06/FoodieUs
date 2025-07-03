@@ -54,3 +54,25 @@ backend/coverage/
 # === OS/system files ===
 Thumbs.db
 ehthumbs.db
+
+# Ignore all files inside assets
+frontend/src/assets/*
+
+# But keep specific images
+!frontend/src/assets/BannerImage.png
+!frontend/src/assets/AboutImage.png
+!frontend/src/assets/dummyAdmin.jsx
+!frontend/src/assets/dummydata.js
+!frontend/src/assets/IA1.png
+!frontend/src/assets/IA2.png
+!frontend/src/assets/IA3.png
+!frontend/src/assets/IA4.png
+!frontend/src/assets/IA5.png
+!frontend/src/assets/IA6.png
+!frontend/src/assets/Image1.png
+!frontend/src/assets/Image2.png
+!frontend/src/assets/Image3.png
+!frontend/src/assets/Image4.png
+!frontend/src/assets/OmDD.js
+!frontend/src/assets/OmhDD.js
+!frontend/src/assets/Video.mp4
