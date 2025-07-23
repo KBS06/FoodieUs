@@ -6,7 +6,7 @@ import {
 
 
 export const navLinks = [
-    { name: 'Add Items', href: '/', icon: <FiPlusCircle /> },
+    { name: 'Add Items', href: '/add-items', icon: <FiPlusCircle /> },
     { name: 'List Items', href: '/list', icon: <FiList /> },
     { name: 'Orders', href: '/orders', icon: <FiPackage /> },
 ];

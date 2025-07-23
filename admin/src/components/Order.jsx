@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { layoutClasses, tableClasses,statusStyles, paymentMethodDetails, iconMap } from '../assets/dummyadmin'
+import { layoutClasses, tableClasses, statusStyles, paymentMethodDetails, iconMap } from '../assets/dummyadmin'
 import axios from 'axios'
-import { FiUser,FiBox } from 'react-icons/fi'
+import { FiUser, FiBox } from 'react-icons/fi'
+import { MdFastfood } from 'react-icons/md'
 
 const Order = () => {
 
@@ -18,7 +19,7 @@ const Order = () => {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           }
         );
-  
+
         const formatted = response.data.map(order => ({
           ...order,
           address: order.address ?? order.shippingAddress?.address ?? '',
@@ -30,7 +31,7 @@ const Order = () => {
             year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
           }),
         }));
-  
+
         setOrders(formatted);
         setError(null);
       } catch (err) {
@@ -42,24 +43,45 @@ const Order = () => {
     fetchOrders();
   }, []);
 
-  const handleStatusChange = async (orderId , newStatus) => {
+  const handleStatusChange = async (orderId, newStatus) => {
     try {
       await axios.put(`http://localhost:4000/api/orders/getall/${orderId}`,
-        {status: newStatus}
+        { status: newStatus }
       );
-      setOrders(orders.map(o => o._id === orderId ? {...o, status: newStatus} : o))
+      setOrders(orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o))
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update the order status')
     }
   }
 
-  if(loading) return (
-    <div className={layoutClasses.page + ' flex items-center justify-center'}>
-      <div className='text-amber-400 text-xl'>Loading Orders...</div>
-    </div>
-  )
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 flex items-center justify-center p-6">
+        <div className="text-center">
+          {/* Animated loading icon */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-2xl animate-pulse"></div>
+            <div className="relative bg-gradient-to-br from-amber-800/80 to-orange-800/80 backdrop-blur-sm rounded-full p-6 border border-amber-400/30 shadow-2xl">
+              <MdFastfood className="text-6xl text-amber-300 animate-spin" style={{ animationDuration: '2s' }} />
+            </div>
+          </div>
 
-  if(error) return (
+          {/* Loading text */}
+          <h2 className="text-3xl font-bold text-amber-100 mb-2">Loading Orders</h2>
+          <p className="text-amber-200/70">Fetching your order data...</p>
+
+          {/* Loading dots animation */}
+          <div className="flex justify-center gap-2 mt-4">
+            <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+            <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) return (
     <div className={layoutClasses.page + ' flex items-center justify-center'}>
       <div className='text-red-400 text-xl'>{error}</div>
     </div>
@@ -87,9 +109,9 @@ const Order = () => {
                   const totalPrice = order.total ?? order.items.reduce((s, i) => s + i.item.price * i.quantity, 0);
                   // Look up the display details for the payment method (lowercased), defaulting if not found
                   const payMethod = paymentMethodDetails[order.paymentMethod?.toLowerCase()] || paymentMethodDetails.default;
-                  // Pick the style for the payment status, falling back to “processing” if unknown
+                  // Pick the style for the payment status, falling back to "processing" if unknown
                   const payStatusStyle = statusStyles[order.paymentStatus] || statusStyles.processing;
-                  // Pick the style for the order’s overall status, falling back to “processing” if unknown
+                  // Pick the style for the order's overall status, falling back to "processing" if unknown
                   const stat = statusStyles[order.status] || statusStyles.processing;
 
                   return (
@@ -99,11 +121,11 @@ const Order = () => {
                       </td>
                       <td className={tableClasses.cellBase}>
                         <div className='flex items-center gap-2'>
-                          <FiUser className='text-amber-400'/>
+                          <FiUser className='text-amber-400' />
                           {/**USER DATA INFO  */}
                           <div>
                             <p className=' text-amber-100'>
-                              {order.user?.name || order.firstName+ ' ' + order.lastName}
+                              {order.user?.name || order.firstName + ' ' + order.lastName}
                             </p>
                             <p className='text-sm text-amber-400/60'>
                               {order.user?.phone || order.phone}
@@ -124,9 +146,9 @@ const Order = () => {
                         <div className='space-y-1 max-h-52 overflow-auto'>
                           {order.items.map((itm, idx) => (
                             <div key={idx} className='flex items-center gap-3 p-2 rounded-lg'>
-                              <img src={`http://localhost:4000${itm.item.imageUrl}`} 
-                              alt={itm.item.name}
-                              className='w-10 h-10 object-cover rounded-lg'/>
+                              <img src={`http://localhost:4000${itm.item.imageUrl}`}
+                                alt={itm.item.name}
+                                className='w-10 h-10 object-cover rounded-lg' />
 
                               <div className='flex-1'>
                                 <span className='text-amber-100/80 text-sm block truncate'>
@@ -147,7 +169,7 @@ const Order = () => {
 
                       <td className={tableClasses.cellBase + ' text-center'}>
                         <div className='flex items-center justify-center gap-1'>
-                          <FiBox className='text-amber-400'/>
+                          <FiBox className='text-amber-400' />
                           <span className='text-amber-300 text-lg'>{totalItems}</span>
                         </div>
                       </td>
@@ -176,10 +198,10 @@ const Order = () => {
                             {iconMap[stat.icon]}
                           </span>
                           <select value={order.value} onChange={e => handleStatusChange(order._id, e.target.value)}
-                          className={`px-4 py-2 rounded-lg ${stat.bg} ${stat.color} border border-amber-500/20 text-sm cursor-pointer`}>
+                            className={`px-4 py-2 rounded-lg ${stat.bg} ${stat.color} border border-amber-500/20 text-sm cursor-pointer`}>
                             {Object.entries(statusStyles).filter(([k]) => k !== 'succeeded').map(([key, sty]) => (
                               <option value={key} key={key}
-                              className={`${sty.bg} ${sty.color}`}>
+                                className={`${sty.bg} ${sty.color}`}>
                                 {sty.label}
                               </option>
                             ))}
@@ -194,7 +216,7 @@ const Order = () => {
           </div>
 
           {orders.length === 0 && <div className='text-center py-12 text-amber-100/60 text-xl'>
-          No Orders Found</div>}
+            No Orders Found</div>}
 
         </div>
       </div>

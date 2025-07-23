@@ -22,16 +22,7 @@ const CheckoutPage = () => {
 
     return (
         {/* Personal Info Section */ }
-        < div className = "bg-[#4b3b3b]/80 p-6 rounded-3xl space-y-6" >
-                        <h2 className="text-2xl font-bold">Personal Information</h2>
-                        <Input label="First Name" name="firstName" value={formData.firstName} onChange={handleInputChange} />
-                        <Input label="Last Name" name="lastName" value={formData.lastName} onChange={handleInputChange} />
-                        <Input label="Phone" name="phone" value={formData.phone} onChange={handleInputChange} />
-                        <Input label="Email" name="email" type="email" value={formData.email} onChange={handleInputChange} />
-                        <Input label="Address" name="address" value={formData.address} onChange={handleInputChange} />
-                        <Input label="City" name="city" value={formData.city} onChange={handleInputChange} />
-                        <Input label="Zip Code" name="zipCode" value={formData.zipCode} onChange={handleInputChange} />
-                    </div >
+
     )
 
 }
@@ -40,26 +31,26 @@ const CheckoutPage = () => {
 
 // DUMMY DATA FOR MYORDERPAGE
 
-                        const formattedOrders = response.data.map(order => ({
-          ...order,
-          items: order.items?.map(entry => ({
-            _id: entry._id,
-            item: {
-              ...entry.item,
-              imageUrl: entry.item.imageUrl,   // <-- CORRECT: pull from entry.item
-            },
-            quantity: entry.quantity
-          })) || [],
-          createdAt: new Date(order.createdAt).toLocaleDateString('en-IN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          }),
-          paymentStatus: order.paymentStatus?.toLowerCase() || 'pending'
-        }));
-                        
+const formattedOrders = response.data.map(order => ({
+    ...order,
+    items: order.items?.map(entry => ({
+        _id: entry._id,
+        item: {
+            ...entry.item,
+            imageUrl: entry.item.imageUrl,   // <-- CORRECT: pull from entry.item
+        },
+        quantity: entry.quantity
+    })) || [],
+    createdAt: new Date(order.createdAt).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }),
+    paymentStatus: order.paymentStatus?.toLowerCase() || 'pending'
+}));
+
 const statusStyles = {
     processing: {
         color: 'text-amber-400',
@@ -139,22 +130,3 @@ const getPaymentMethodDetails = (method) => {
         const paymentMethod = getPaymentMethodDetails(order.paymentMethod);
         const status = statusStyles[order.status] || statusStyles.processing;
         const paymentStatus = statusStyles[order.paymentStatus] || statusStyles.pending;
-
-
-
-
-               // CONTACT US
-  // Build the message text from your formData:
-  const message = `
-    Name: ${formData.name}
-    Phone: ${formData.phone}
-    Email: ${formData.email}
-    Address: ${formData.address}
-    Dish: ${formData.dish}
-    Query: ${formData.query}
-  `;
-
-+ const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
-
-  setFormData({ name: '', phone: '', email: '', address: '', dish: '', query: '' });
-}

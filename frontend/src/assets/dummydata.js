@@ -108,7 +108,7 @@ export const teamMembers = [
     },
     {
         name: "Akash Trivedi",
-        role: "Su Chef",
+        role: "Sushi Chef",
         img: IA6,
         bio: "5th generation sushi chef | Traditional techniques",
         delay: 0.5,
