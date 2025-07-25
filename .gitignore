@@ -74,8 +74,6 @@ backend/upload/*
 !frontend/src/assets/Image2.png
 !frontend/src/assets/Image3.png
 !frontend/src/assets/Image4.png
-!frontend/src/assets/OmDD.js
-!frontend/src/assets/OmhDD.js
 !frontend/src/assets/Video.mp4
 !frontend/src/assets/Kebab.png
 !frontend/src/assets/ChickenTikka.png
