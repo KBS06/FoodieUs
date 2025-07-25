@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useCart } from '../../pages/CartContext/CartContext'
 import { Link } from 'react-router-dom'
 import { FaMinus, FaPlus, FaTimes, FaTrash } from 'react-icons/fa'
-import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_BASE_URL
 
