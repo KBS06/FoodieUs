@@ -77,3 +77,11 @@ backend/upload/*
 !frontend/src/assets/OmDD.js
 !frontend/src/assets/OmhDD.js
 !frontend/src/assets/Video.mp4
+!frontend/src/assets/Kebab.png
+!frontend/src/assets/ChickenTikka.png
+!frontend/src/assets/ChickenChargha.png
+!frontend/src/assets/DesiChowmein.png
+!frontend/src/assets/GulabJamun.png
+!frontend/src/assets/MasalaDosa.png
+!frontend/src/assets/PannerTikka.png
+!frontend/src/assets/PalakPaneer.png
