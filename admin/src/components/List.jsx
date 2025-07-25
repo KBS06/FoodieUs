@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { styles } from '../assets/dummyadmin'
 import { FiHeart, FiStar, FiTrash2 } from 'react-icons/fi';
 import { MdFastfood } from 'react-icons/md';
-import axios from 'axios'
+import axios from 'axios';
 
 const List = () => {
 
@@ -12,7 +12,7 @@ const List = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const { data } = await axios.get('http://localhost:4000/api/items');
+        const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/items`);
         setItems(data);
       } catch (error) {
         console.error('Error fetching items: ', error);
@@ -29,7 +29,7 @@ const List = () => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
 
     try {
-      await axios.delete(`http://localhost:4000/api/items/${itemId}`)
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/items/${itemId}`)
       setItems(prev => prev.filter(item => item._id !== itemId))
       console.log('Deleted item ID: ', itemId)
     } catch (err) {

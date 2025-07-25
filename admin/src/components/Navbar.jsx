@@ -2,11 +2,21 @@ import React, { useState } from 'react'
 import { navLinks, styles } from '../assets/dummyadmin'
 import { GiChefToque } from "react-icons/gi";
 import { FiMenu, FiX } from 'react-icons/fi';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('loginData');
+    window.location.href = import.meta.env.VITE_FRONTEND_URL || '/';
+  };
+
 
   return (
     <nav className={styles.navWrapper}>
@@ -32,6 +42,11 @@ const Navbar = () => {
               </span>
             </NavLink>
           ))}
+
+          <button onClick={handleLogout} className={`${styles.navLinkBase} border-amber-900/30 text-amber-100 hover:border-amber-500 hover:bg-amber-900/20`}>
+            <FiX className="border-amber-900/30 text-amber-100 hover:border-amber-500 hover:bg-amber-900/20" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
 
@@ -49,6 +64,14 @@ const Navbar = () => {
               </span>
             </NavLink>
           ))}
+
+          <button onClick={() => {
+            setMenuOpen(false);
+            handleLogout();
+          }} className={`${styles.navLinkBase} border-amber-900/30 text-amber-100 hover:border-amber-500 hover:bg-amber-900/20`}>
+            <FiX className="border-amber-900/30 text-amber-100 hover:border-amber-500 hover:bg-amber-900/20"/>
+            <span>Logout</span>
+          </button>
         </div>
       )}
     </nav>

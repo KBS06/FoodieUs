@@ -1,5 +1,5 @@
-// backend/middleware/auth.js
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const authMiddleware = (req, res, next) => {
   const token =
@@ -47,6 +47,7 @@ const userMiddleware = (req, res, next) => {
         message: "Access denied. User privileges required.",
       });
     }
+    
     next();
   });
 };

@@ -12,10 +12,9 @@
   type: module -> ES6 module
   cookie-parser -> taking tokens and data from user as cookies*/
 }
-
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
@@ -37,7 +36,7 @@ const __dirname = path.dirname(__filename);
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+      const allowedOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {

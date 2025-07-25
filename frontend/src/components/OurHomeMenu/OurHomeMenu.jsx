@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { useCart } from '../../pages/CartContext/CartContext'
-import {FaMinus, FaPlus} from 'react-icons/fa'
-import {Link} from 'react-router-dom'
+import { FaMinus, FaPlus } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 import './OurHomeMenu.css'
-import axios from 'axios'
+import axios from 'axios';
 
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Mexican', 'Italian', 'Desserts', 'Drinks']
 
 const OurHomeMenu = () => {
 
   const [activeCategory, setActiveCategory] = useState(categories[0]);
-  const {cartItems, addToCart, removeFromCart, updateQuantity} = useCart();
+  const { cartItems, addToCart, removeFromCart, updateQuantity } = useCart();
   const [menuData, setMenuData] = useState({});
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/items')
-    .then(res => {
-      const grouped = res.data.reduce((acc, item) => {
-        acc[item.category] = acc[item.category] || [];
-        acc[item.category].push(item)
-        return acc;
-      },{})
-      setMenuData(grouped)
-    })
-    .catch(console.error)
-  },[])
+    axios.get(`${import.meta.env.VITE_BASE_URL}/api/items`)
+      .then(res => {
+        const grouped = res.data.reduce((acc, item) => {
+          acc[item.category] = acc[item.category] || [];
+          acc[item.category].push(item)
+          return acc;
+        }, {})
+        setMenuData(grouped)
+      })
+      .catch(console.error)
+  }, [])
 
   //USE ID TO FIND AND UPDATE
   const getCartEntry = id => cartItems.find(ci => ci.item?._id === id);
@@ -49,12 +49,12 @@ const OurHomeMenu = () => {
         <div className='flex flex-wrap justify-center gap-4 mb-16'>
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-            className={`px-4 sm:px-6 py-2 rounded-full border-2 transition-all duration-300 transform
+              className={`px-4 sm:px-6 py-2 rounded-full border-2 transition-all duration-300 transform
             font-cinzel text-sm sm:text-lg tracking-widest backdrop-blur-sm 
-            ${activeCategory === cat ? 
-              'bg-gradient-to-r from-amber-900/80 to-amber-700/80 border-amber-800 scale-105 shadow-xl shadow-amber-900/30'
-              : 'bg-amber-900/20 border-amber-800/30 text-amber-100/80 hover:bg-amber-800/40 hover:scale-95'
-            }`}>
+            ${activeCategory === cat ?
+                  'bg-gradient-to-r from-amber-900/80 to-amber-700/80 border-amber-800 scale-105 shadow-xl shadow-amber-900/30'
+                  : 'bg-amber-900/20 border-amber-800/30 text-amber-100/80 hover:bg-amber-800/40 hover:scale-95'
+                }`}>
               {cat}
             </button>
           ))}
@@ -68,12 +68,12 @@ const OurHomeMenu = () => {
             return (
               <div key={item._id} className='relative bg-amber-900/20 rounded-2xl overflow-hidden border
               border-amber-800/30 backdrop-blur-sm flex flex-col transition-all duration-500'
-              style={{'--index': i }}>
+                style={{ '--index': i }}>
                 <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10'>
                   <img src={item.imageUrl} alt={item.name}
-                  className='max-h-full max-w-full object-contain transition-all duration-700 '/>
+                    className='max-h-full max-w-full object-contain transition-all duration-700 ' />
                 </div>
-                <div className='p-4 sm:p-6 flex flex-col flex-grow'> 
+                <div className='p-4 sm:p-6 flex flex-col flex-grow'>
                   <div className='absolute top-0 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent
                   via-amber-800/50 to-transparent opacity-50 transition-all duration-300'/>
                   <h3 className='text-xl sm:text-2xl mb-2 font-dancingscript text-amber-100 transition-colors '>
@@ -95,24 +95,24 @@ const OurHomeMenu = () => {
                       {qty > 0 ? (
                         <>
                           <button className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center
-                          justify-center hover:bg-amber-800/50 transition-colors' 
-                          onClick={() => qty > 1 ? updateQuantity(cartEntry._id, qty - 1) :
-                            removeFromCart(cartEntry._id)
-                          }>
-                            <FaMinus className='text-amber-100 '/>
+                          justify-center hover:bg-amber-800/50 transition-colors'
+                            onClick={() => qty > 1 ? updateQuantity(cartEntry._id, qty - 1) :
+                              removeFromCart(cartEntry._id)
+                            }>
+                            <FaMinus className='text-amber-100 ' />
                           </button>
                           <span className='w-8 text-center text-amber-100'>
                             {qty}
                           </span>
                           <button className='w-8 h-8 rounded-full bg-amber-900/40 flex items-center
-                          justify-center hover:bg-amber-800/50 transition-colors' 
-                          onClick={() => updateQuantity(cartEntry._id, qty + 1)}>
-                            <FaPlus className='text-amber-100 '/>
+                          justify-center hover:bg-amber-800/50 transition-colors'
+                            onClick={() => updateQuantity(cartEntry._id, qty + 1)}>
+                            <FaPlus className='text-amber-100 ' />
                           </button>
                         </>
-                      ): (
+                      ) : (
                         <button onClick={() => addToCart(item, 1)}
-                        className='bg-amber-900/40 px-4 py-1.5 rounded-full font-cinzel
+                          className='bg-amber-900/40 px-4 py-1.5 rounded-full font-cinzel
                         text-xs uppercase sm:text-sm tracking-wider transition-transform duration-300
                         hover:scale-110 hover:shadow-lg hover:shadow-amber-900 relative overflow-hidden 
                         border border-amber-800/50 '>
@@ -131,7 +131,7 @@ const OurHomeMenu = () => {
 
         <div className='flex justify-center mt-16 '>
           <Link to='/menu'
-          className='bg-amber-900/30 border-2 border-amber-800/30 text-amber-100 px-8
+            className='bg-amber-900/30 border-2 border-amber-800/30 text-amber-100 px-8
           sm:px-10 py-3 rounded-full font-cinzel uppercase tracking-widest transition-all duration-300
           hover:bg-amber-800/40 hover:text-amber-50 hover:scale-105 hover:shadow-lg
           hover:shadow-amber-900/20 backdrop-blur-sm'>

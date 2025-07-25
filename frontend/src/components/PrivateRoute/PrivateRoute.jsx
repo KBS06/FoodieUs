@@ -1,4 +1,3 @@
-// frontend/src/components/PrivateRoute/PrivateRoute.jsx
 import React from "react";
 import { Navigate } from 'react-router-dom'
 
@@ -17,7 +16,7 @@ const PrivateRoute = ({ children, requiredRole = 'user' }) => {
     if (requiredRole && user.role !== requiredRole) {
       // If admin tries to access user routes, redirect to admin panel
       if (user.role === 'admin') {
-        window.location.href = 'http://localhost:5174';
+        window.location.href = `${import.meta.env.VITE_ADMIN_URL}`;
         return null;
       }
       // If user tries to access admin routes, redirect to home

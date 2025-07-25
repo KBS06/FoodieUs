@@ -1,152 +1,88 @@
-import React, { useCallback, useContext, useEffect, useReducer } from 'react';
-import { createContext } from 'react';
-import axios from 'axios';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
+// Create Context
 const CartContext = createContext();
 
-//REDUCER HANDLING CART ACTIONS LIKE ADD,REMOVE, UPDATE, QUANTITY AND ITEM.
+// Custom Hook
+export const useCart = () => useContext(CartContext);
 
-const cartReducer = (state, action) => {
-  switch(action.type) {
-    case 'HYDRATE_CART':
-    return action.payload;
-    case 'ADD_ITEM': {
-      const {_id, item,quantity} = action.payload;
-      const exists = state.find(ci => ci._id === _id);
-      if(exists) {
-        return state.map(ci => ci._id === _id ? {...ci, quantity:ci.quantity + quantity} : ci);
-      }
-      return [...state, {_id, item, quantity}];
-    }
-    case 'REMOVE_ITEM' : {
-      return state.filter(ci => ci._id !== action.payload);
-    }
-    case 'UPDATE_ITEM' : {
-      const {_id, quantity} = action.payload;
-      return state.map(ci => ci._id === _id ? {...ci, quantity}: ci)
-    }
-    case 'CLEAR_CART':
+// Cart Provider
+export const CartProvider = ({ children }) => {
+  // ✅ Ensure array initialization
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const storedCart = JSON.parse(localStorage.getItem('cartItems'));
+      return Array.isArray(storedCart) ? storedCart : [];
+    } catch (err) {
+      console.error('Failed to parse cart from localStorage:', err);
       return [];
-    default: return state;
-  }
-}
+    }
+  });
 
-//INITIALIZE CART FROM LOCALSTORAGE
-
-const initializer = () => {
-  try{
-    return JSON.parse(localStorage.getItem('cart') || '[]');
-  }
-  catch{
-    return []
-  }
-}
-
-export const CartProvider = ({children}) => {
-
-  const [cartItems, dispatch] = useReducer(cartReducer, [], initializer);
-
-  //PERSIST CART STATE TO LOCALSTORAGE
+  // Save to localStorage on change
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  },[cartItems]);
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  //HYDRATE FROM SERVER API
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if(!token) return;
-    axios.get(`http://localhost:4000/api/cart`,{
-      withCredentials: true,
-      headers:{Authorization: `Bearer ${token}`},
-    })
-    .then(res => dispatch({type: 'HYDRATE_CART',payload: res.data}))
-    .catch(err => {if (err.response?.status !== 401) console.error(err) })
-  },[])
-
-  //DISPATCHER WRAPPED WITH CALBACK FOR PERFORMANCE
-  const addToCart = useCallback(async(item, qty) => {
-    const token = localStorage.getItem('authToken')
-    const res = await axios.post(
-      `http://localhost:4000/api/cart`,
-      {itemId: item._id, quantity: qty},
-      {withCredentials: true,
-        headers:{Authorization: `Bearer ${token}`}
+  // ✅ Add item to cart
+  const addToCart = (item, quantity = 1) => {
+    setCartItems(prev => {
+      const existing = prev.find(ci => ci.item._id === item._id);
+      if (existing) {
+        return prev.map(ci =>
+          ci.item._id === item._id ? { ...ci, quantity: ci.quantity + quantity } : ci
+        );
+      } else {
+        return [...prev, { _id: item._id, item, quantity }];
       }
-    )
-    const {_id, item: savedItem, quantity} = res.data;
-    dispatch({type: 'ADD_ITEM', payload: {_id, item: savedItem, quantity}})
-  },[])
+    });
+  };
 
-  const removeFromCart = useCallback(async _id  => {
-    const token = localStorage.getItem('authToken')
-    await axios.delete(
-      `http://localhost:4000/api/cart/${_id}`,
-      {
-        withCredentials: true,
-        headers: {Authorization: `Bearer ${token}`}
-      }
-    )
-    dispatch({type: 'REMOVE_ITEM', payload: _id})
-  },[])
+  // ✅ Remove item from cart
+  const removeFromCart = (itemId) => {
+    setCartItems(prev => prev.filter(ci => ci.item._id !== itemId));
+  };
 
-  const updateQuantity = useCallback(async(_id, qty) => {
-    const token = localStorage.getItem('authToken')
-    const res = await axios.put(
-      `http://localhost:4000/api/cart/${_id}`,
-      {quantity: qty},
-      {
-        withCredentials: true,
-        headers: {Authorization: `Bearer ${token}`}
-      }
-    )
-    dispatch({type: 'UPDATE_ITEM', payload: {_id, quantity: qty}})
-  },[])
+  // ✅ Update quantity
+  const updateQuantity = (itemId, newQty) => {
+    if (newQty <= 0) {
+      removeFromCart(itemId);
+      return;
+    }
+    setCartItems(prev =>
+      prev.map(ci =>
+        ci.item._id === itemId ? { ...ci, quantity: newQty } : ci
+      )
+    );
+  };
 
-  const clearCart = useCallback(async () => {
-    const token = localStorage.getItem('authToken')
-    await axios.post(
-      'http://localhost:4000/api/cart/clear',
-      {},
-      {
-        withCredentials: true,
-        headers: {Authorization: `Bearer ${token}`}
-      }
-    )
-    dispatch({type: 'CLEAR_CART'})
-  },[])
+  // ✅ Get total items and total price
+  const totalItems = Array.isArray(cartItems)
+    ? cartItems.reduce((sum, ci) => sum + (ci.quantity || 0), 0)
+    : 0;
 
-  const totalItems = cartItems.reduce((sum, ci) => sum + ci.quantity, 0);
-  const totalAmount = cartItems.reduce((sum, ci) => {
-    const price = ci?.item?.price ?? 0;
-    const qty = ci?.quantity ?? 0;
-    return sum + price *qty
-  },0)
+  const totalPrice = Array.isArray(cartItems)
+    ? cartItems.reduce((sum, ci) => sum + (ci.quantity * (ci.item.price || 0)), 0)
+    : 0;
 
-  return(
-    <CartContext.Provider value={{
-      cartItems,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      totalItems,
-      totalAmount,
-    }}>
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+
+  return (
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        totalItems,
+        totalPrice,
+      }}
+    >
       {children}
     </CartContext.Provider>
-  )
-}
-
-  // //CALCULATE TOTAL COST AND TOTAL ITEM COUNT
-  // const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  // const totalItemsCount = cartItems.reduce((sum,item) => sum + item.quantity, 0);
-
-  // //FORMAT TOTAL ITEMS IN POWER FORM
-  // const formatTotalItems = (num) => {
-  //   if(num >= 1000) {
-  //     return (num/1000).toFixed(1) + 'k';
-  //   }
-  //   return num;
-  // }
-
-export const useCart = () => useContext(CartContext);
+  );
+};

@@ -15,7 +15,7 @@ const MyOrder = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/orders', {
+        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/orders`, {
           params: { email: user?.email },
           headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
         })
@@ -26,7 +26,7 @@ const MyOrder = () => {
             _id: entry._id,
             item: {
               ...entry.item,
-              imageUrl: entry.item.imageUrl,   // <-- CORRECT: pull from entry.item
+              imageUrl: entry.item.imageUrl,  
             },
             quantity: entry.quantity
           })) || [],
@@ -215,7 +215,7 @@ const MyOrder = () => {
                                 className='w-full flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 bg-[#3a2b2b] rounded-lg'>
 
                                 <img
-                                  src={`http://localhost:4000${item.item.imageUrl}`}
+                                  src={`${item.item.imageUrl}`}
                                   alt={item.item.name}
                                   className='w-10 h-10 object-cover rounded-lg'
                                 />

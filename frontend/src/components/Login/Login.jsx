@@ -1,11 +1,10 @@
-// frontend/src/components/Login/Login.jsx
 import React, { useEffect, useState } from 'react'
 import { FaArrowRight, FaCheckCircle, FaEye, FaEyeSlash, FaUser, FaLock, FaUserPlus, FaExclamationCircle, FaUserShield } from 'react-icons/fa';
 import { iconClass, inputBase } from '../../assets/dummydata';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const url = 'http://localhost:4000'
+const url = import.meta.env.VITE_BASE_URL
 
 const Login = ({ onLoginSuccess, onClose }) => {
   const navigate = useNavigate();
@@ -73,7 +72,7 @@ const Login = ({ onLoginSuccess, onClose }) => {
           // Redirect based on role
           if (userRole === 'admin') {
             // Redirect to admin dashboard
-            window.location.href = 'http://localhost:5174'; // Admin panel URL
+            window.location.href = `${import.meta.env.VITE_ADMIN_URL}`; // Admin panel URL
           } else {
             // Stay on frontend for users
             onLoginSuccess(res.data.token);
