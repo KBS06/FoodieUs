@@ -22,7 +22,7 @@ const Contact = () => {
     const encodedMessage = encodeURIComponent(message);
 
     //WHATSAPP NO.
-    const whatsappNumber = '917698417234'
+    const whatsappNumber = '911234567890'
 
     //WHATSAPP API
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
@@ -103,7 +103,7 @@ const Contact = () => {
               <div className='pl-16 relative space-y-1 z-10 pb-2'>
                 <p className='text-amber-100 font-light flex items-center'>
                   <FiGlobe className='text-gray-400 text-xl mr-2'/>
-                  +91 7698417234
+                  +91 0123456789
                 </p>
               </div>
             </div>  
@@ -125,7 +125,7 @@ const Contact = () => {
 
               <div className='pl-16 relative space-y-1 z-10 pb-2'>
                 <p className='text-orange-100 font-light text-lg'>
-                  khushibshah06@gmail.com
+                  abc@gmail.com
                 </p>
               </div>
             </div>
